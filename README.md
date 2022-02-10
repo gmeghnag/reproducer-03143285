@@ -7,7 +7,7 @@ It runs a pod (single container) who output sized chunk logs as expressed by the
 oc run reproducer-03143285  --image=quay.io/gmeghnag/reproducer-03143285 --env="BYTES=30972802" --env="SLEEP=40"
 ```
 
-- ### Get node were reproducer is running
+- ### Get the name of the node where the reproducer is running
 ```
 REPRODUCER_NODE=$(oc get pods -A -l run=reproducer-03143285 -o jsonpath='{.items[0].spec.nodeName}')
 ```
