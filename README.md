@@ -9,17 +9,17 @@ oc run reproducer-03143285  --image=quay.io/gmeghnag/reproducer-03143285 --env="
 
 - ### Get node were reproducer is running
 ```
-NODE=$(oc get pods -A -l run=reproducer-03143285 -o jsonpath='{.items[0].spec.nodeName}')
+REPRODUCER_NODE=$(oc get pods -A -l run=reproducer-03143285 -o jsonpath='{.items[0].spec.nodeName}')
 ```
 
 - ### Get the name of the fluentd who is collecting the  reproducer logs
 ```
-oc get pods -n openshift-logging -l 'component in (fluentd, collector)' -o jsonpath="{.items[?(@.spec.nodeName=='$NODE')].metadata.name}"
+FLUENTD_POD=$(oc get pods -n openshift-logging -l 'component in (fluentd, collector)' -o jsonpath="{.items[?(@.spec.nodeName=='$REPRODUCER_NODE')].metadata.name}")
 ```
 
 - ### Catch `BufferChunkOverflowError` error
 ```
-oc logs -n openshift-logging $(oc get pods -n openshift-logging -l 'component in (fluentd, collector)' -o jsonpath="{.items[?(@.spec.nodeName=='$NODE')].metadata.name}") --all-containers | grep BufferChunkOverflowError | tail -1
+oc logs -n openshift-logging $FLUENTD_POD --all-containers | grep BufferChunkOverflowError | tail -1
 ```
 ---
 ## Workaround
